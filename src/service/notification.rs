@@ -5,7 +5,7 @@ use rocket::log;
 use rocket::serde::json::to_string;
 use rocket::tokio;
 
-use bambangshop_receiver::{APP_CONFIG, REQWEST_CLIENT, Result, compose_error_response}
+use bambangshop_receiver::{APP_CONFIG, REQWEST_CLIENT, Result, compose_error_response};
 use crate::model::notification::Notification;
 use crate::model::subscriber::SubscriberRequest;
 use crate::repository::notification::NotificationRepository;
@@ -50,7 +50,7 @@ impl NotificationService{
         return thread::spawn(move || Self::subscribe_request(product_type_clone))
             .join().unwrap();
     }
-
+    #[tokio::main]
     async fn unsubscribe_request(product_type: String) -> Result<SubscriberRequest> {
         let product_type_upper: String = product_type.to_uppercase();
         let product_type_str: &str = product_type_upper.as_str();
@@ -68,7 +68,7 @@ impl NotificationService{
         return match request {
             Ok(f) => match f.json::<SubscriberRequest>().await {
                 Ok(x) => Ok(x),
-                Err(_y) => Err(compose_error_Response(
+                Err(_y) => Err(compose_error_response(
                     Status::NotFound,
                     String::from("Already unsubscribed to the topic.")
                 ))
